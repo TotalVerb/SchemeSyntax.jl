@@ -17,6 +17,8 @@ end
     @test SchemeSyntax.tojulia(sx"""
       (if x y z)
     """) == :(x ? y : z)
+    @test evaluate(sx"(if #t 1 2)") == 1
+    @test evaluate(sx"(if #f 1 2)") == 2
 end
 
 @testset "quote" begin
@@ -33,15 +35,19 @@ end
     """) == List(:+, 2, :x)
 end
 
-@testset "Julia" begin
+@testset "Dispatch" begin
     @test evaluate(sx"""
     (begin
       (define (foo (:: x Integer)) 1)
       (define (foo (:: x String)) 2)
       (string (foo 1) (foo "x")))
     """) == "12"
+end
 
-    @test evaluate(sx"((. Base +) 1 2)") == 3
+@testset "Field access" begin
+    @test evaluate(sx"((.+ Base) 1 2)") == 3
+    @test evaluate(sx"(.Markdown Base)") === Base.Markdown
+    @test evaluate(sx"(.MD (.Markdown Base))") === Base.Markdown.MD
 end
 
 for (sym, fn) in [[:and, &], [:or, |]]
@@ -66,7 +72,9 @@ end
     @test !evaluate(sx"(boolean? 10)")
 end
 
-@test evaluate(sx"(ref (List 1 2 3) 2)") == 2
+@testset "Indexing" begin
+    @test evaluate(sx"(ref (List 1 2 3) 2)") == 2
+end
 
 @testset "λ" begin
     @test evaluate(sx"((λ (x) (* x x)) 10)") == 100
@@ -77,11 +85,6 @@ end
     @test evaluate(sx"(let ([x 1]) x)") == 1
     @test evaluate(sx"(let ([x 1] [y 2]) (+ x y))") == 3
     @test evaluate(sx"(let ([x 1] [y (+ 1 1)]) (+ x y))") == 3
-end
-
-@testset "." begin
-    @test evaluate(sx"(. Base Markdown)") === Base.Markdown
-    @test evaluate(sx"(. Base Markdown MD)") === Base.Markdown.MD
 end
 
 @testset "define" begin

@@ -37,14 +37,28 @@ function quasiquote(α::List)
     end
 end
 
+isfieldaccess(x::Symbol) = let s = string(x)
+    length(s) > 1 && s[1] == '.'
+end
+isfieldaccess(::Any) = false
+asfield(x::Symbol) = tojulia(Symbol(string(x)[2:end]))
+
 function tojulia(α::List)
     if isa(car(α), Keyword)
         Expr(Symbol(car(α).sym), (tojulia ⊚ cdr(α))...)
     elseif car(α) == :.
+        Base.depwarn("(. field obj) is deprecated; use (.field obj)",
+                     :tojulia)
         if length(α) == 3
             Expr(:., tojulia(α[2]), QuoteNode(tojulia(α[3])))
         else
             tojulia(List(:., List(:., α[2], α[3]), drop(α, 3)...))
+        end
+    elseif isfieldaccess(car(α))
+        if length(α) == 2
+            Expr(:., tojulia(α[2]), QuoteNode(asfield(α[1])))
+        else
+            error(".field notation accepts only a single argument")
         end
     elseif car(α) ∈ [:λ, :lambda]
         Expr(:->, Expr(:tuple, α[2]...), tojulia(α[3]))
