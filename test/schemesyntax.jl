@@ -122,10 +122,11 @@ end
     @test evaluate(sx"(when #f (+ 1 1))") == nothing
     @test evaluate(sx"(when #t (cons 'x nil))") == cons(:x, nil)
     @test evaluate(sx"(when #f (cons 'x nil))") == nothing
-    @test evaluate(sx"(when (== 1 2) (+ 1 1))") == nothing
+    @test evaluate(sx"(when (= 1 2) (+ 1 1))") == nothing
     @test evaluate(sx"(when (< 1 2) (+ 1 1))") == 2
 end
 @testset "unless" begin
     @test evaluate(sx"(let ([x #f]) (unless x 1))") == 1
     @test evaluate(sx"(let ([x #t]) (unless x 1))") == nothing
 end
+

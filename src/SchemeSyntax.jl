@@ -9,8 +9,12 @@ using SExpressions.Keywords
 tojulia(x) = x
 tojulia(x::Keyword) = error("keyword used as an expression")
 function tojulia(x::Symbol)
-    xstr = replace(string(x), '-', '_')
-    Symbol(xstr[end] == '?' ? "is" * xstr[1:end-1] : xstr)
+    if x == :(=)
+        :(==)
+    else
+        xstr = replace(string(x), r"[-/]", '_')
+        Symbol(xstr[end] == '?' ? "is" * xstr[1:end-1] : xstr)
+    end
 end
 
 const _IMPLICIT_KEYWORDS = Dict(
@@ -111,9 +115,6 @@ function tojulia(α::List)
             Expr(_IMPLICIT_KEYWORDS[head], (tojulia ⊚ args)...)
         elseif haskey(_IMPLICIT_MACROS, head)
             Expr(:macrocall, _IMPLICIT_MACROS[head], (tojulia ⊚ args)...)
-        elseif head == :(=)
-            Base.depwarn("= is deprecated; use `set!` or `define`", :tojulia)
-            tojulia(cons(:define, args))
         else
             Expr(:call, (tojulia ⊚ α)...)
         end
