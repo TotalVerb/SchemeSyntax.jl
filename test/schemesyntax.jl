@@ -7,6 +7,10 @@ evaluate(α) = eval(SchemeSyntax.tojulia(α))
 
 @testset "Errors" begin
     @test_throws ErrorException SchemeSyntax.tojulia(sx"#:keyword")
+    @test_throws ErrorException SchemeSyntax.tojulia(sx"(quote x y)")
+    @test_throws ErrorException SchemeSyntax.tojulia(sx"(define x y z)")
+    @test_throws ErrorException SchemeSyntax.tojulia(sx"(let ([x y]))")
+    @test_throws ErrorException SchemeSyntax.tojulia(sx"(lambda (x))")
 end
 
 @testset "Calls" begin
@@ -83,10 +87,16 @@ end
 @testset "λ" begin
     @test evaluate(sx"((λ (x) (* x x)) 10)") == 100
     @test evaluate(sx"((λ (x y) (* x y)) 10 20)") == 200
+    @test evaluate(sx"""
+    ((λ (x)
+        (define (f y) (+ x y))
+        (+ (f 1) 2)) 10)
+    """) == 13
 end
 
 @testset "let" begin
     @test evaluate(sx"(let ([x 1]) x)") == 1
+    @test evaluate(sx"(let ([x 1]) (define y x) (+ y x))") == 2
     @test evaluate(sx"(let ([x 1] [y 2]) (+ x y))") == 3
     @test evaluate(sx"(let ([x 1] [y (+ 1 1)]) (+ x y))") == 3
 end
