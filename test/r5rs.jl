@@ -20,6 +20,7 @@
     @test_broken !evaluate(sx"(inexact? 1)")
 
     @test evaluate(sx"(= 1 1)")
+    @test evaluate(sx"(= -0 0)")
     @test_broken evaluate(sx"(= 1 1 1/1 1+0i)")
     @test evaluate(sx"(< 1 2)")
     @test_broken !evaluate(sx"(< 1 1+0i)")
@@ -33,7 +34,7 @@
     @test !evaluate(sx"(zero? 10)")
     @test evaluate(sx"(zero? 0)")
     @test evaluate(sx"(zero? 0/1)")
-    @test_broken evaluate(sx"(zero? -0)")
+    @test evaluate(sx"(zero? -0)")
     @test_broken evaluate(sx"(zero? 0+0i)")
     @test_broken evaluate(sx"(positive? 1)")
     @test_broken evaluate(sx"(positive? 1+0i)")
