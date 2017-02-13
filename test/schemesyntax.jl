@@ -5,6 +5,10 @@ using SchemeSyntax.R5RS
 
 evaluate(α) = eval(SchemeSyntax.tojulia(α))
 
+@testset "Errors" begin
+    @test_throws ErrorException SchemeSyntax.tojulia(sx"#:keyword")
+end
+
 @testset "Calls" begin
     @test SchemeSyntax.tojulia(sx"(+ 1 1)") == :(1 + 1)
     @test evaluate(sx"(+ 1 1)") == 2

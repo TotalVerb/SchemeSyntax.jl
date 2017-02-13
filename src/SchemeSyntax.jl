@@ -7,6 +7,7 @@ using SExpressions.Lists
 using SExpressions.Keywords
 
 tojulia(x) = x
+tojulia(x::Keyword) = error("keyword used as an expression")
 function tojulia(x::Symbol)
     xstr = replace(string(x), '-', '_')
     Symbol(xstr[end] == '?' ? "is" * xstr[1:end-1] : xstr)
