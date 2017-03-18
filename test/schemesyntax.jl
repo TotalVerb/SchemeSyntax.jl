@@ -16,6 +16,7 @@ end
 @testset "Calls" begin
     @test SchemeSyntax.tojulia(sx"(+ 1 1)") == :(1 + 1)
     @test evaluate(sx"(+ 1 1)") == 2
+    @test evaluate(sx"(- 1 1)") == 0
     @test evaluate(sx"(void)") === nothing
     @test evaluate(sx"(void 1 2)") === nothing
     @test evaluate(sx"(void (* 1 3))") === nothing
