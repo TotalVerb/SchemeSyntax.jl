@@ -131,3 +131,11 @@ end
     @test evaluate(sx"(let ([x #t]) (unless x 1))") == nothing
 end
 
+@testset "module" begin
+    @test evaluate(sx"(module Foo0 (define x 10))").x == 10
+    @test Set(names(evaluate(sx"""
+        (module Foo1
+          (export x)
+          (define x 10))
+          """))) == Set([:Foo1, :x])
+end

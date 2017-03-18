@@ -6,6 +6,8 @@ using Base.Iterators
 using SExpressions.Lists
 using SExpressions.Keywords
 
+include("expanders.jl")
+
 tojulia(x) = x
 tojulia(x::Keyword) = error("keyword used as an expression")
 function tojulia(x::Symbol)
@@ -33,6 +35,12 @@ const _IMPLICIT_MACROS = Dict(
     :unless => Symbol("@unless"),
     # r5rs
     :set! => Symbol("@set!"))
+
+const _SYNTAX_EXPANDERS = Dict(
+    :export => expandexport,
+    :module => expandmodule
+)
+
 
 quasiquote(x) = x
 quasiquote(x::Symbol) = Meta.quot(x)
@@ -117,6 +125,8 @@ function tojulia(α::List)
             Expr(_IMPLICIT_KEYWORDS[head], (tojulia ⊚ args)...)
         elseif haskey(_IMPLICIT_MACROS, head)
             Expr(:macrocall, _IMPLICIT_MACROS[head], (tojulia ⊚ args)...)
+        elseif haskey(_SYNTAX_EXPANDERS, head)
+            _SYNTAX_EXPANDERS[head]((tojulia ⊚ args)...)
         else
             Expr(:call, (tojulia ⊚ α)...)
         end
