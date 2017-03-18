@@ -15,6 +15,8 @@ function tojulia(x::Symbol)
         :(==)
     elseif x == :(-)
         :(-)
+    elseif x == :(/)
+        :(/)
     else
         xstr = replace(string(x), r"[-/]", '_')
         Symbol(xstr[end] == '?' ? "is" * xstr[1:end-1] : xstr)
