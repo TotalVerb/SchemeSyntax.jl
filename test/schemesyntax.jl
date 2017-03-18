@@ -135,7 +135,7 @@ end
     @test evaluate(sx"(module Foo0 (define x 10))").x == 10
     @test Set(names(evaluate(sx"""
         (module Foo1
-          (export x)
+          (provide x)
           (define x 10))
           """))) == Set([:Foo1, :x])
 end

@@ -37,7 +37,7 @@ const _IMPLICIT_MACROS = Dict(
     :set! => Symbol("@set!"))
 
 const _SYNTAX_EXPANDERS = Dict(
-    :export => expandexport,
+    :provide => expandprovide,
     :module => expandmodule
 )
 
