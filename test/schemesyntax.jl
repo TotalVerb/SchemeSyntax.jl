@@ -139,4 +139,9 @@ end
           (provide x)
           (define x 10))
           """))) == Set([:Foo1, :x])
+    @test evaluate(sx"""
+        (module Foo2
+          (require (.Iterators Base))
+          (define flat flatten))
+          """).flat === Base.Iterators.flatten
 end

@@ -40,7 +40,8 @@ const _IMPLICIT_MACROS = Dict(
 
 const _SYNTAX_EXPANDERS = Dict(
     :provide => expandprovide,
-    :module => expandmodule
+    :module => expandmodule,
+    :require => expandrequire
 )
 
 
