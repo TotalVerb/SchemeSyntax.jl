@@ -44,15 +44,19 @@ const _SYNTAX_EXPANDERS = Dict(
     :require => expandrequire
 )
 
-
-quasiquote(x) = x
-quasiquote(x::Symbol) = Meta.quot(x)
-function quasiquote(α::List)
+quasiquote(x, _=1) = x
+quasiquote(x::Symbol, _=1) = Meta.quot(x)
+function quasiquote(α::List, level=1)
     if car(α) == :unquote
-        tojulia(cadr(α))
-    else
-        Expr(:call, :List, map(quasiquote, α)...)
+        if level == 1
+            return tojulia(cadr(α))
+        else
+            level -= 1
+        end
+    elseif car(α) == :quasiquote
+        level += 1
     end
+    Expr(:call, :List, (quasiquote(x, level) for x in α)...)
 end
 
 isfieldaccess(x::Symbol) = let s = string(x)

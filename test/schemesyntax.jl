@@ -34,6 +34,9 @@ end
 @testset "quote" begin
     @test evaluate(sx"'x") == :x
     @test evaluate(sx"`(+ 1 1)") == List(:+, 1, 1)
+    @test evaluate(sx"(let ((z 1)) `(car `(x ,y) ,z))") ==
+          evaluate(sx"'(car `(x ,y) 1)") ==
+          List(:car, List(:quasiquote, List(:x, List(:unquote, :y))), 1)
 end
 
 @testset "set!" begin
