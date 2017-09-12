@@ -101,8 +101,10 @@ function tojulia(α::List)
         elseif head == :let
             if length(args) ≥ 2
                 Expr(:let,
-                     tojulia(cons(:begin, cdr(args))),
-                     (Expr(:(=), map(tojulia, γ)...) for γ in args[1])...)
+                     Expr(:block,
+                          (Expr(:(=), map(tojulia, γ)...)
+                           for γ in args[1])...),
+                     tojulia(cons(:begin, cdr(args))))
             else
                 error(string("incorrect let syntax; must be ",
                              "(let ([x y]) body)"))
