@@ -36,7 +36,9 @@ const _IMPLICIT_MACROS = Dict(
     :when => Symbol("@when"),
     :unless => Symbol("@unless"),
     # r5rs
-    :set! => Symbol("@set!"))
+    :set! => Symbol("@set!"),
+    # julia extensions
+    :isdefined => Symbol("@isdefined"))
 
 const _SYNTAX_EXPANDERS = Dict(
     :provide => expandprovide,
