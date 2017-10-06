@@ -68,15 +68,7 @@ isfieldaccess(::Any) = false
 asfield(x::Symbol) = tojulia(Symbol(string(x)[2:end]))
 
 function tojulia(α::List)
-    if car(α) == :.
-        Base.depwarn("(. field obj) is deprecated; use (.field obj)",
-                     :tojulia)
-        if length(α) == 3
-            Expr(:., tojulia(α[2]), QuoteNode(tojulia(α[3])))
-        else
-            tojulia(List(:., List(:., α[2], α[3]), drop(α, 3)...))
-        end
-    elseif isfieldaccess(car(α))
+    if isfieldaccess(car(α))
         if length(α) == 2
             Expr(:., tojulia(α[2]), QuoteNode(asfield(α[1])))
         else
