@@ -1,5 +1,7 @@
 function expandmodule(name::Symbol, body...)
-    Expr(:module, true, name, Expr(:block, body...))
+    # TODO: use proper line information
+    line = LineNumberNode(-1, "Remarkable dummy file")
+    Expr(:module, true, name, Expr(:block, line, body...))
 end
 
 function expandprovide(exports::Symbol...)
