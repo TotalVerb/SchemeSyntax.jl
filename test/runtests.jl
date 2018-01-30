@@ -1,5 +1,5 @@
 using SchemeSyntax
-using Base.Test
+using Test
 
 # write your own tests here
 include("schemesyntax.jl")

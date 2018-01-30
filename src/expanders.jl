@@ -18,5 +18,5 @@ function parts(name::Expr)
 end
 
 function expandrequire(names...)
-    Expr(:toplevel, (Expr(:using, parts(name)...) for name in names)...)
+    Expr(:toplevel, (Expr(:using, Expr(:(.), parts(name)...)) for name in names)...)
 end
