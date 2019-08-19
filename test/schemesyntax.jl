@@ -59,8 +59,8 @@ end
 
 @testset "Field access" begin
     @test evaluate(sx"((.+ Base) 1 2)") == 3
-    @test evaluate(sx"(.Markdown Base)") === Base.Markdown
-    @test evaluate(sx"(.MD (.Markdown Base))") === Base.Markdown.MD
+    @test evaluate(sx"(.Multimedia Base)") === Base.Multimedia
+    @test evaluate(sx"(.TextDisplay (.Multimedia Base))") === Base.Multimedia.TextDisplay
 end
 
 for (sym, fn) in [[:and, &], [:or, |]]
