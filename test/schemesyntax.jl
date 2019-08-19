@@ -23,6 +23,16 @@ end
     @test evaluate(sx"(void (* 1 3))") === nothing
 end
 
+@testset "symbols" begin
+    @test SchemeSyntax.tojulia(sx"foo") == :foo
+    @test SchemeSyntax.tojulia(sx"foo-bar") == :foo_bar
+    @test SchemeSyntax.tojulia(sx"foo_bar") == :foo_bar
+    @test SchemeSyntax.tojulia(sx"foo/bar") == :foo_bar
+    @test SchemeSyntax.tojulia(sx"-") == :(-)
+    @test SchemeSyntax.tojulia(sx"/") == :(/)
+    @test SchemeSyntax.tojulia(sx"even?") == :(iseven)
+end
+
 @testset "if" begin
     @test SchemeSyntax.tojulia(sx"""
       (if x y z)
