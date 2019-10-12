@@ -125,19 +125,19 @@ function tojulia(α::List)
                              "(quasiquote ...)"))
             end
         elseif haskey(_IMPLICIT_KEYWORDS, head)
-            Expr(_IMPLICIT_KEYWORDS[head], (tojulia ⊚ args)...)
+            Expr(_IMPLICIT_KEYWORDS[head], tojulia.(args)...)
         elseif haskey(_IMPLICIT_MACROS, head)
             Expr(:macrocall,
                  _IMPLICIT_MACROS[head],
                  LineNumberNode(1, "unknown"),
-                 (tojulia ⊚ args)...)
+                 tojulia.(args)...)
         elseif haskey(_SYNTAX_EXPANDERS, head)
-            _SYNTAX_EXPANDERS[head]((tojulia ⊚ args)...)
+            _SYNTAX_EXPANDERS[head](tojulia.(args)...)
         else
-            Expr(:call, (tojulia ⊚ α)...)
+            Expr(:call, tojulia.(α)...)
         end
     else
-        Expr(:call, (tojulia ⊚ α)...)
+        Expr(:call, tojulia.(α)...)
     end
 end
 
