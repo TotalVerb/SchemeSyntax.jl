@@ -1,3 +1,4 @@
+import SExpressions: SExpression
 using SchemeSyntax
 using Test
 
