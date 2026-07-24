@@ -23,6 +23,16 @@ isrational(z::Complex) = isreal(z) && isrational(real(z))
 
 export isnumber, iscomplex, isrational
 
+if !isdefined(Base, :ispositive)
+    ispositive(x::Real) = x > 0
+    export ispositive
+end
+
+if !isdefined(Base, :isnegative)
+    isnegative(x::Real) = x < 0
+    export isnegative
+end
+
 # not
 # http://docs.racket-lang.org/r5rs/r5rs-std/r5rs-Z-H-9.html#%_sec_6.3.1
 not(x::Bool) = !x

@@ -25,6 +25,29 @@ include("expanders.jl")
 
 tojulia(x) = x
 tojulia(x::Keyword) = error("keyword used as an expression")
+
+# Julia nightly (1.14+) compares Expr leaves with ===, so BigInt literals no
+# longer compare equal to Int literals. Narrow exact numeric types when they fit
+# so generated expressions match plain Julia literals in tests.
+function narrow(x::Number)
+    if x isa BigInt
+        typemin(Int) <= x <= typemax(Int) ? Int(x) : x
+    elseif x isa Rational{BigInt}
+        n, d = numerator(x), denominator(x)
+        if typemin(Int) <= n <= typemax(Int) && typemin(Int) <= d <= typemax(Int)
+            Rational(Int(n), Int(d))
+        else
+            x
+        end
+    elseif x isa Complex{BigInt}
+        Complex(narrow(real(x)), narrow(imag(x)))
+    elseif x isa Complex{Rational{BigInt}}
+        Complex(narrow(real(x)), narrow(imag(x)))
+    else
+        x
+    end
+end
+tojulia(x::Number) = narrow(x)
 function tojulia(x::Symbol)
     if x == :(=)
         :(==)
