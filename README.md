@@ -1,6 +1,6 @@
 # SchemeSyntax
 
-[![Build Status](https://travis-ci.org/TotalVerb/SchemeSyntax.jl.svg?branch=master)](https://travis-ci.org/TotalVerb/SchemeSyntax.jl)
+[![Build Status](https://github.com/TotalVerb/SchemeSyntax.jl/actions/workflows/CI.yml/badge.svg?branch=master)](https://github.com/TotalVerb/SchemeSyntax.jl/actions/workflows/CI.yml)
 
 [![Coverage Status](https://coveralls.io/repos/TotalVerb/SchemeSyntax.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/TotalVerb/SchemeSyntax.jl?branch=master)
 
