@@ -6,6 +6,21 @@ using Base.Iterators
 using SExpressions.Lists
 using SExpressions.Keywords
 
+modulefield(mod, s::Symbol) = Core.getfield(mod, s)
+modulenames(mod, all::Bool, imported::Bool) = names(mod; all=all, imported=imported)
+modulenameof(mod) = nameof(mod)
+
+struct ModuleWrapper
+    mod::Module
+end
+
+Base.getproperty(w::ModuleWrapper, s::Symbol) =
+    Base.invokelatest(modulefield, getfield(w, :mod), s)
+Base.names(w::ModuleWrapper; all::Bool=false, imported::Bool=false) =
+    Base.invokelatest(modulenames, getfield(w, :mod), all, imported)
+Base.nameof(w::ModuleWrapper) =
+    Base.invokelatest(modulenameof, getfield(w, :mod))
+
 include("expanders.jl")
 
 tojulia(x) = x
