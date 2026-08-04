@@ -6,10 +6,48 @@ using Base.Iterators
 using SExpressions.Lists
 using SExpressions.Keywords
 
+modulefield(mod, s::Symbol) = Core.getfield(mod, s)
+modulenames(mod, all::Bool, imported::Bool) = names(mod; all=all, imported=imported)
+modulenameof(mod) = nameof(mod)
+
+struct ModuleWrapper
+    mod::Module
+end
+
+Base.getproperty(w::ModuleWrapper, s::Symbol) =
+    Base.invokelatest(modulefield, getfield(w, :mod), s)
+Base.names(w::ModuleWrapper; all::Bool=false, imported::Bool=false) =
+    Base.invokelatest(modulenames, getfield(w, :mod), all, imported)
+Base.nameof(w::ModuleWrapper) =
+    Base.invokelatest(modulenameof, getfield(w, :mod))
+
 include("expanders.jl")
 
 tojulia(x) = x
 tojulia(x::Keyword) = error("keyword used as an expression")
+
+# Julia nightly (1.14+) compares Expr leaves with ===, so BigInt literals no
+# longer compare equal to Int literals. Narrow exact numeric types when they fit
+# so generated expressions match plain Julia literals in tests.
+function narrow(x::Number)
+    if x isa BigInt
+        typemin(Int) <= x <= typemax(Int) ? Int(x) : x
+    elseif x isa Rational{BigInt}
+        n, d = numerator(x), denominator(x)
+        if typemin(Int) <= n <= typemax(Int) && typemin(Int) <= d <= typemax(Int)
+            Rational(Int(n), Int(d))
+        else
+            x
+        end
+    elseif x isa Complex{BigInt}
+        Complex(narrow(real(x)), narrow(imag(x)))
+    elseif x isa Complex{Rational{BigInt}}
+        Complex(narrow(real(x)), narrow(imag(x)))
+    else
+        x
+    end
+end
+tojulia(x::Number) = narrow(x)
 function tojulia(x::Symbol)
     if x == :(=)
         :(==)

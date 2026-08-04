@@ -1,7 +1,9 @@
 function expandmodule(name::Symbol, body...)
     # TODO: use proper line information
     line = LineNumberNode(-1, "Remarkable dummy file")
-    Expr(:module, true, name, Expr(:block, line, body...))
+    Expr(:toplevel,
+         Expr(:module, true, name, Expr(:block, line, body...)),
+         Expr(:call, :(SchemeSyntax.ModuleWrapper), name))
 end
 
 function expandprovide(exports::Symbol...)
